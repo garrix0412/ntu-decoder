@@ -1,0 +1,10 @@
+name = "ntu-paper-assistant"
+main = "src/index.js"
+compatibility_date = "2026-06-09"
+
+[ai]
+binding = "AI"
+
+[vars]
+MODEL = "@cf/meta/llama-3.1-8b-instruct"
+ALLOWED_ORIGINS = "https://garrix0412.github.io,http://localhost:8000,http://127.0.0.1:8000"
