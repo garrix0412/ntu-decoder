@@ -289,8 +289,9 @@
           <p class="eyebrow">Main results</p>
           <h2>Transfer improves large-scale decoding for surface and BB codes.</h2>
           <p>
-            The project page focuses on panels a and c of the main result figures:
-            decoding performance and transfer behavior.
+            The updated result figures show decoding performance, robustness under
+            detector-error bins, and transfer behavior. The text emphasizes panels
+            a and c, while panel b diagnoses the high-detector-error regime.
           </p>
         </div>
 
@@ -302,16 +303,18 @@
               Figure 2a compares logical error rate across physical error rates,
               showing that the neural decoder remains competitive where matching
               baselines are strained by correlated, degenerate detector events.
-              Figure 2c isolates the training effect: transfer initialization
-              avoids the cold-start plateau seen when large-distance models are
-              trained from scratch.
+              Figure 2b breaks down accuracy by detector-error count, and Figure
+              2c isolates the training effect: transfer initialization avoids the
+              cold-start plateau seen when large-distance models are trained from
+              scratch.
             </p>
           </div>
           <figure class="result-card">
-            <img src="assets/surface-ac.png" alt="Surface-code result panels a and c" />
+            <img src="assets/surface-results.png" alt="Updated surface-code result panels a, b, and c" />
             <figcaption>
-              Surface-code Figure 2a and Figure 2c: decoding performance and
-              transfer-versus-scratch training behavior.
+              Updated surface-code Figure 2. Panels a and c highlight decoding
+              performance and transfer-versus-scratch training behavior.
+              <a class="figure-link" href="surface.pdf">PDF source</a>
             </figcaption>
           </figure>
         </article>
@@ -322,17 +325,19 @@
             <h3>The same principle transfers beyond planar geometry.</h3>
             <p>
               Figure 3a shows strong NTU-Transformer performance on the base BB
-              code against belief-propagation-based baselines. Figure 3c shows the
+              code against belief-propagation-based baselines. Figure 3b evaluates
+              robustness as detector-error count increases. Figure 3c shows the
               larger <code>[[144,12,12]]</code> target case, where transferred
               models rapidly improve while scratch training can stagnate near
               random guessing.
             </p>
           </div>
           <figure class="result-card">
-            <img src="assets/bb-ac.png" alt="BB-code result panels a and c" />
+            <img src="assets/bb-results.png" alt="Updated BB-code result panels a, b, and c" />
             <figcaption>
-              BB-code Figure 3a and Figure 3c: base-code performance and transfer
-              to the larger quantum LDPC code.
+              Updated BB-code Figure 3. Panels a and c emphasize base-code
+              performance and transfer to the larger quantum LDPC code.
+              <a class="figure-link" href="BB.pdf">PDF source</a>
             </figcaption>
           </figure>
         </article>
@@ -348,48 +353,117 @@
           </p>
         </div>
 
-        <div class="split-section reverse compact-split">
-          <div class="method-stack compact-method-stack">
-            <article>
-              <h3>Input and output</h3>
+        <div class="methods-grid">
+          <article class="method-card logical-method">
+            <div class="method-card-header">
+              <p class="eyebrow">Logical-error prediction</p>
+              <h3>NTU-Transformer</h3>
               <p>
-                Input <code>{0,1}^{T x m}</code> detector history; output
-                <code>[0,1]^k</code> logical-error probabilities.
+                The Transformer route treats decoding as direct logical
+                classification. It receives the binary detector history from
+                <code>d</code> syndrome rounds and predicts the logical error
+                probability for each encoded qubit.
               </p>
-            </article>
-            <article>
-              <h3>Stem</h3>
-              <p>Embed detector events with local code geometry and neighborhood roles.</p>
-            </article>
-            <article>
-              <h3>Spatial transformer</h3>
-              <p>Mix detector features within each syndrome round while preserving local motifs.</p>
-            </article>
-            <article>
-              <h3>Temporal recurrent path</h3>
-              <p>Track how detector events persist or move along repeated syndrome rounds.</p>
-            </article>
-            <article>
-              <h3>Cross-attention readout</h3>
-              <p>Aggregate spatiotemporal features into <code>k</code> logical status predictions.</p>
-            </article>
-          </div>
-
-          <div class="prose">
-            <h3>NTU-Transformer: logical-error prediction</h3>
-            <p>
-              The Transformer route treats decoding as direct logical
-              classification. It separates reusable local detector perception from
-              target-size-specific global readout, making transferred weights
-              meaningful when the code distance grows.
-            </p>
-            <div class="callout compact-callout">
-              <strong>GNN-based neural-BP.</strong>
-              The physical-error route runs message passing on the Tanner graph and
-              learns parameterized aggregation weights, preserving the BP inductive
-              bias while adapting to realistic circuit-noise correlations.
             </div>
-          </div>
+
+            <div class="io-strip" aria-label="Transformer input and output">
+              <div>
+                <span>Input</span>
+                <strong>{0,1}<sup>d x m</sup></strong>
+                <small><code>m</code> detectors per round</small>
+              </div>
+              <div>
+                <span>Output</span>
+                <strong>[0,1]<sup>k</sup></strong>
+                <small>logical-error probabilities</small>
+              </div>
+            </div>
+
+            <div class="method-flow">
+              <div class="flow-step">
+                <span>01</span>
+                <h4>Stem</h4>
+                <p>
+                  Embed detector events with local code geometry, detector type,
+                  and neighborhood roles so tokens already carry QEC structure.
+                </p>
+              </div>
+              <div class="flow-step">
+                <span>02</span>
+                <h4>Spatial transformer</h4>
+                <p>
+                  Within each syndrome round, self-attention mixes spatially
+                  related detector features and preserves the local motif.
+                </p>
+              </div>
+              <div class="flow-step">
+                <span>03</span>
+                <h4>Temporal recurrent path</h4>
+                <p>
+                  Along the <code>t</code> axis, recurrent updates track
+                  measurement noise and error chains that persist across rounds.
+                </p>
+              </div>
+              <div class="flow-step">
+                <span>04</span>
+                <h4>Cross-attention readout</h4>
+                <p>
+                  Learned logical tokens query the spatiotemporal representation
+                  and produce the final <code>k</code>-dimensional readout.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <article class="method-card physical-method">
+            <div class="method-card-header">
+              <p class="eyebrow">Physical-error prediction</p>
+              <h3>GNN-based neural-BP</h3>
+              <p>
+                The graph route keeps the belief-propagation inductive bias but
+                makes the aggregation learnable. It predicts physical error
+                probabilities on data qubits instead of directly predicting the
+                logical vector.
+              </p>
+            </div>
+
+            <div class="tanner-panel" aria-label="Tanner graph message passing">
+              <div class="tanner-node check-node">checks</div>
+              <div class="tanner-edges"></div>
+              <div class="tanner-node variable-node">data qubits</div>
+            </div>
+
+            <div class="method-detail-grid">
+              <div>
+                <h4>Tanner graph</h4>
+                <p>
+                  Variable nodes represent data qubits, check nodes represent
+                  stabilizer constraints, and edges encode the parity-check matrix.
+                </p>
+              </div>
+              <div>
+                <h4>Message passing</h4>
+                <p>
+                  The GNN alternates variable-to-check and check-to-variable
+                  updates, mirroring BP while allowing learned nonlinear updates.
+                </p>
+              </div>
+              <div>
+                <h4>Parameterized aggregation</h4>
+                <p>
+                  Learnable aggregation weights control how strongly neighboring
+                  messages contribute, adapting BP to code-specific correlations.
+                </p>
+              </div>
+              <div>
+                <h4>Physical readout</h4>
+                <p>
+                  The output is a per-data-qubit error probability map, which can
+                  be converted into a correction before checking logical status.
+                </p>
+              </div>
+            </div>
+          </article>
         </div>
       </section>
 
