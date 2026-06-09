@@ -474,7 +474,7 @@ function addAssistantMessage(text, role) {
 
 if (assistantWidget) {
   if (assistantConfigured) {
-    setAssistantStatus("Connected to the paper assistant backend.", "ready");
+    setAssistantStatus("Connected to the paper and code assistant backend.", "ready");
   } else {
     setAssistantStatus(
       "Backend not connected yet. Deploy the Cloudflare Worker, then replace the endpoint in index.html.",
@@ -531,7 +531,7 @@ assistantForm?.addEventListener("submit", async (event) => {
     assistantHistory.push({ role: "user", content: question });
     assistantHistory.push({ role: "assistant", content: answer });
     setAssistantStatus(
-      data.sources?.length ? `Sources: ${data.sources.join(", ")}` : "Answered from paper context.",
+      data.sources?.length ? `Sources: ${data.sources.join(", ")}` : "Answered from paper and code context.",
       "ready",
     );
   } catch (error) {

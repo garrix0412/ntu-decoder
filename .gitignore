@@ -11,3 +11,5 @@ surface_ablation.pdf
 surface_transfer_d11_from_d7ckpts.pdf
 transformer_transfer_144_from_72ckpts.pdf
 zeros_collapse.pdf
+codes/
+paper-assistant-worker/node_modules/
